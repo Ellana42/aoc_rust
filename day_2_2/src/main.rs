@@ -9,13 +9,17 @@ enum Mvt {
 struct Position {
     pos: i32,
     depth: i32,
+    aim: i32,
 }
 
 fn move_boat(mvt: Mvt, mut position: Position) -> Position {
     match mvt {
-        Mvt::Up(i) => position.depth = position.depth - i,
-        Mvt::Down(i) => position.depth = position.depth + i,
-        Mvt::Forward(i) => position.pos = position.pos + i,
+        Mvt::Up(i) => position.aim = position.aim - i,
+        Mvt::Down(i) => position.aim = position.aim + i,
+        Mvt::Forward(i) => {
+            position.pos = position.pos + i;
+            position.depth = position.depth + position.aim * i;
+        }
     };
     position
 }
@@ -28,7 +32,11 @@ fn main() {
         let split: Vec<&str> = instruction.split(" ").collect();
         array_intructions.push((split[0], split[1].parse().unwrap()));
     }
-    let mut position = Position { pos: 0, depth: 0 };
+    let mut position = Position {
+        pos: 0,
+        depth: 0,
+        aim: 0,
+    };
     for instruction in &array_intructions {
         let mvt: Mvt = match instruction.0 {
             "up" => Mvt::Up(instruction.1),
